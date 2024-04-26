@@ -20,7 +20,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	srv := server.New("chi-api", cfg, logger)
+	srv, err := server.New("chi-api", cfg, logger)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
 	withCancelCtx, cancelServer := context.WithCancel(context.Background())
 
 	sig := make(chan os.Signal, 1)

@@ -7,6 +7,8 @@ tasks:
   run:
     cmds:
       - go run ./cmd/chi-api
+    env:
+      TOKEN_PATH: local/token
 
   build:
     cmds:
@@ -24,7 +26,7 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - docker run -it -p 3333:3333 --rm chi-api:{{ default "latest" .TAG }}
+      - docker run -it -p 3333:3333 -v ./local:/var/run --rm chi-api:{{ default "latest" .TAG }}
 
   hook:setup:
     cmds:
