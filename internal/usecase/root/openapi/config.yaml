@@ -2,4 +2,8 @@
 package: root
 generate:
   models: true
+  chi-server: true
+output-options:
+  include-tags:
+    - root
 output: ../types.gen.go

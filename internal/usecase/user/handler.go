@@ -10,25 +10,26 @@ import (
 	"github.com/unrolled/render"
 )
 
-var _ route.Routable = (*handler)(nil)
+var _ ServerInterface = (*RouteHandler)(nil)
+var _ route.Routable = (*RouteHandler)(nil)
 
 func NewHandler() route.Routable {
-	return &handler{
+	return &RouteHandler{
 		renderer: render.New(),
 	}
 }
 
-type handler struct {
+type RouteHandler struct {
 	renderer *render.Render
 }
 
-func (h *handler) Routes() []*route.Route {
+func (h *RouteHandler) Routes() []*route.Route {
 	return []*route.Route{
-		route.Protected("POST", "/users", h.post),
+		route.Protected("POST", "/users", h.PostUsers),
 	}
 }
 
-func (h *handler) post(w http.ResponseWriter, req *http.Request) {
+func (h *RouteHandler) PostUsers(w http.ResponseWriter, req *http.Request) {
 	var postData CreateUserRequest
 	if err := json.NewDecoder(req.Body).Decode(&postData); err != nil {
 		_ = h.renderer.JSON(w, http.StatusBadRequest, response.Fail("received invalid request body"))

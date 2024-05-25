@@ -9,24 +9,25 @@ import (
 
 var Version = "main"
 
-var _ route.Routable = (*handler)(nil)
+var _ ServerInterface = (*RouteHandler)(nil)
+var _ route.Routable = (*RouteHandler)(nil)
 
 func NewHandler() route.Routable {
-	return &handler{
+	return &RouteHandler{
 		renderer: render.New(),
 	}
 }
 
-type handler struct {
+type RouteHandler struct {
 	renderer *render.Render
 }
 
-func (h *handler) Routes() []*route.Route {
+func (h *RouteHandler) Routes() []*route.Route {
 	return []*route.Route{
-		route.Public("GET", "/", h.get),
+		route.Public("GET", "/", h.Get),
 	}
 }
 
-func (h *handler) get(w http.ResponseWriter, _ *http.Request) {
+func (h *RouteHandler) Get(w http.ResponseWriter, _ *http.Request) {
 	_ = h.renderer.JSON(w, http.StatusOK, RootResponse{Version: Version})
 }

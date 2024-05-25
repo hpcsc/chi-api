@@ -13,10 +13,27 @@ import (
 	"github.com/go-chi/httplog/v2"
 	"github.com/hpcsc/chi-api/internal/config"
 	"github.com/hpcsc/chi-api/internal/usecase"
+	"github.com/hpcsc/chi-api/internal/usecase/root"
+	"github.com/hpcsc/chi-api/internal/usecase/user"
 )
 
+// serverHandler is used purely to ensure combination of all child handlers satisfy overall `ServerInterface`
+// .i.e. no route is missing
+var _ ServerInterface = (*serverHandler)(nil)
+
+// need to use type alias since all child route handlers have the same name `RouteHandler` (in different packages)
+// we cannot embed structs with the same name in `serverHandler` below
+type rootHandler = root.RouteHandler
+type userHandler = user.RouteHandler
+
+// serverHandler is combination of all child route handlers
+type serverHandler struct {
+	rootHandler
+	userHandler
+}
+
 func New(name string, cfg *config.Config, logger *slog.Logger) (*Server, error) {
-	handler, err := newHandler(name, cfg, logger)
+	handler, err := newServerHandler(name, cfg, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +48,7 @@ func New(name string, cfg *config.Config, logger *slog.Logger) (*Server, error) 
 	}, nil
 }
 
-func newHandler(name string, cfg *config.Config, logger *slog.Logger) (http.Handler, error) {
+func newServerHandler(name string, cfg *config.Config, logger *slog.Logger) (http.Handler, error) {
 	r := chi.NewRouter()
 
 	r.Use(httplog.RequestLogger(httplog.NewLogger(name, httplog.Options{
