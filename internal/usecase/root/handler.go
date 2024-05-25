@@ -24,10 +24,10 @@ type RouteHandler struct {
 
 func (h *RouteHandler) Routes() []*route.Route {
 	return []*route.Route{
-		route.Public("GET", "/", h.Get),
+		route.Public("GET", "/", h.GetApi),
 	}
 }
 
-func (h *RouteHandler) Get(w http.ResponseWriter, _ *http.Request) {
+func (h *RouteHandler) GetApi(w http.ResponseWriter, _ *http.Request) {
 	_ = h.renderer.JSON(w, http.StatusOK, RootResponse{Version: Version})
 }

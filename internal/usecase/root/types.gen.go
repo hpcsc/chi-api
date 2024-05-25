@@ -18,16 +18,16 @@ type RootResponse struct {
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (GET /)
-	Get(w http.ResponseWriter, r *http.Request)
+	// (GET /api)
+	GetApi(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// (GET /)
-func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) {
+// (GET /api)
+func (_ Unimplemented) GetApi(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -40,12 +40,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// Get operation middleware
-func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) {
+// GetApi operation middleware
+func (siw *ServerInterfaceWrapper) GetApi(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.Get(w, r)
+		siw.Handler.GetApi(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -169,7 +169,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/", wrapper.Get)
+		r.Get(options.BaseURL+"/api", wrapper.GetApi)
 	})
 
 	return r

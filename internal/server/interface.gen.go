@@ -13,24 +13,24 @@ import (
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (GET /)
-	Get(w http.ResponseWriter, r *http.Request)
+	// (GET /api)
+	GetApi(w http.ResponseWriter, r *http.Request)
 
-	// (POST /users)
-	PostUsers(w http.ResponseWriter, r *http.Request)
+	// (POST /api/users)
+	PostApiUsers(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// (GET /)
-func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) {
+// (GET /api)
+func (_ Unimplemented) GetApi(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (POST /users)
-func (_ Unimplemented) PostUsers(w http.ResponseWriter, r *http.Request) {
+// (POST /api/users)
+func (_ Unimplemented) PostApiUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -43,12 +43,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// Get operation middleware
-func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) {
+// GetApi operation middleware
+func (siw *ServerInterfaceWrapper) GetApi(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.Get(w, r)
+		siw.Handler.GetApi(w, r)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -58,12 +58,12 @@ func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) {
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostUsers operation middleware
-func (siw *ServerInterfaceWrapper) PostUsers(w http.ResponseWriter, r *http.Request) {
+// PostApiUsers operation middleware
+func (siw *ServerInterfaceWrapper) PostApiUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostUsers(w, r)
+		siw.Handler.PostApiUsers(w, r)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -187,10 +187,10 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/", wrapper.Get)
+		r.Get(options.BaseURL+"/api", wrapper.GetApi)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/users", wrapper.PostUsers)
+		r.Post(options.BaseURL+"/api/users", wrapper.PostApiUsers)
 	})
 
 	return r

@@ -25,11 +25,11 @@ type RouteHandler struct {
 
 func (h *RouteHandler) Routes() []*route.Route {
 	return []*route.Route{
-		route.Protected("POST", "/users", h.PostUsers),
+		route.Protected("POST", "/users", h.PostApiUsers),
 	}
 }
 
-func (h *RouteHandler) PostUsers(w http.ResponseWriter, req *http.Request) {
+func (h *RouteHandler) PostApiUsers(w http.ResponseWriter, req *http.Request) {
 	var postData CreateUserRequest
 	if err := json.NewDecoder(req.Body).Decode(&postData); err != nil {
 		_ = h.renderer.JSON(w, http.StatusBadRequest, response.Fail("received invalid request body"))

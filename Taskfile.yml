@@ -35,7 +35,7 @@ tasks:
         curl \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer valid-token" \
-          http://localhost:3333/users \
+          http://localhost:3333/api/users \
           -d '{"name":"test-user","email":"test@example.com","age":30}'
 
   hook:setup:

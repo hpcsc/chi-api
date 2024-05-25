@@ -14,5 +14,7 @@ FROM ubuntu:22.04
 WORKDIR /app
 
 COPY --from=build-env /build/chi-api .
+COPY openapi/index.html openapi/index.html
+COPY openapi/spec.yaml openapi/spec.yaml
 
 ENTRYPOINT ["/app/chi-api"]

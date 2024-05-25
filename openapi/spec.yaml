@@ -8,7 +8,7 @@ tags:
   - name: root
     x-displayName: root
 paths:
-  /users:
+  /api/users:
     post:
       requestBody:
         required: true
@@ -31,7 +31,7 @@ paths:
                 $ref: '#/components/schemas/Response'
       tags:
         - users
-  /:
+  /api:
     get:
       responses:
         '200':

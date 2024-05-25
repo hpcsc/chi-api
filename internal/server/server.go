@@ -65,19 +65,42 @@ func newServerHandler(name string, cfg *config.Config, logger *slog.Logger) (htt
 	})))
 
 	r.Use(middleware.Recoverer)
+
+	apiRouter, err := apiSubRouter(cfg, logger)
+	if err != nil {
+		return nil, err
+	}
+
+	r.Mount("/api", apiRouter)
+	r.Mount("/z", docSubRouter())
+
+	return r, nil
+}
+
+func docSubRouter() http.Handler {
+	router := chi.NewRouter()
+	staticFileServer := http.FileServer(http.Dir("openapi"))
+	router.Mount("/v3/api-docs", http.StripPrefix("/z/v3/api-docs", staticFileServer))
+	return router
+}
+
+func apiSubRouter(cfg *config.Config, logger *slog.Logger) (http.Handler, error) {
 	openAPISchema, err := openapi3.NewLoader().LoadFromFile(openAPISchemaPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load OpenAPI schema from %s: %v", openAPISchemaPath, err)
 	}
-	r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(openAPISchema, &nethttpmiddleware.Options{
+
+	router := chi.NewRouter()
+
+	router.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(openAPISchema, &nethttpmiddleware.Options{
 		ErrorHandler: openapiRequestValidatorErrorHandler,
 	}))
 
-	if err := usecase.Register(r, cfg, logger); err != nil {
+	if err := usecase.Register(router, cfg, logger); err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return router, nil
 }
 
 func openapiRequestValidatorErrorHandler(w http.ResponseWriter, message string, statusCode int) {

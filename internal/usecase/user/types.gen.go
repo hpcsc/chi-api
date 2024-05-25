@@ -17,22 +17,22 @@ type CreateUserRequest struct {
 	Name  string `json:"name" message:"required:{field} is required" validate:"required|min_len:7"`
 }
 
-// PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
-type PostUsersJSONRequestBody = CreateUserRequest
+// PostApiUsersJSONRequestBody defines body for PostApiUsers for application/json ContentType.
+type PostApiUsersJSONRequestBody = CreateUserRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (POST /users)
-	PostUsers(w http.ResponseWriter, r *http.Request)
+	// (POST /api/users)
+	PostApiUsers(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// (POST /users)
-func (_ Unimplemented) PostUsers(w http.ResponseWriter, r *http.Request) {
+// (POST /api/users)
+func (_ Unimplemented) PostApiUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -45,12 +45,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// PostUsers operation middleware
-func (siw *ServerInterfaceWrapper) PostUsers(w http.ResponseWriter, r *http.Request) {
+// PostApiUsers operation middleware
+func (siw *ServerInterfaceWrapper) PostApiUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostUsers(w, r)
+		siw.Handler.PostApiUsers(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -174,7 +174,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/users", wrapper.PostUsers)
+		r.Post(options.BaseURL+"/api/users", wrapper.PostApiUsers)
 	})
 
 	return r
