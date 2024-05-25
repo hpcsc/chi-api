@@ -29,6 +29,15 @@ tasks:
     cmds:
       - docker run -it -p 3333:3333 -v ./local:/var/run --rm chi-api:{{ default "latest" .TAG }}
 
+  local:create-user:
+    cmds:
+      - |
+        curl \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer valid-token" \
+          http://localhost:3333/users \
+          -d '{"name":"test-user","email":"test@example.com","age":30}'
+
   hook:setup:
     cmds:
       - git config core.hooksPath ./hooks

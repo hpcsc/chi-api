@@ -2,20 +2,26 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
 	"github.com/hpcsc/chi-api/internal/config"
+	"github.com/hpcsc/chi-api/internal/response"
 	"github.com/hpcsc/chi-api/internal/usecase"
 	"github.com/hpcsc/chi-api/internal/usecase/root"
 	"github.com/hpcsc/chi-api/internal/usecase/user"
+	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 )
+
+const openAPISchemaPath = "openapi/spec.yaml"
 
 // serverHandler is used purely to ensure combination of all child handlers satisfy overall `ServerInterface`
 // .i.e. no route is missing
@@ -59,12 +65,24 @@ func newServerHandler(name string, cfg *config.Config, logger *slog.Logger) (htt
 	})))
 
 	r.Use(middleware.Recoverer)
+	openAPISchema, err := openapi3.NewLoader().LoadFromFile(openAPISchemaPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load OpenAPI schema from %s: %v", openAPISchemaPath, err)
+	}
+	r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(openAPISchema, &nethttpmiddleware.Options{
+		ErrorHandler: openapiRequestValidatorErrorHandler,
+	}))
 
 	if err := usecase.Register(r, cfg, logger); err != nil {
 		return nil, err
 	}
 
 	return r, nil
+}
+
+func openapiRequestValidatorErrorHandler(w http.ResponseWriter, message string, statusCode int) {
+	w.WriteHeader(statusCode)
+	_ = json.NewEncoder(w).Encode(response.Fail(message))
 }
 
 type Server struct {
