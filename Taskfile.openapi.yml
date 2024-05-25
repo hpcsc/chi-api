@@ -1,0 +1,20 @@
+version: '3'
+
+tasks:
+  merge:
+    cmds:
+      - |
+        find ./internal -type f -name 'spec.yaml' | \
+          xargs yq eval-all '. as $item ireduce ({}; . *+ $item)' > ./openapi/spec.yaml
+
+  join:
+    cmds:
+      - |
+        find ./internal -type f -name 'spec.yaml' | \
+          xargs docker run --rm -v $PWD:/spec redocly/cli join --without-x-tag-groups -o /spec/openapi/spec.yaml
+
+  generate:
+    deps:
+      - join
+    cmds:
+      - go generate ./...

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../openapi/configuration-schema.json
+package: response
+generate:
+  models: true
+output: ../types.gen.go
+output-options:
+  skip-prune: true

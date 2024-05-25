@@ -1,0 +1,21 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Chi API
+paths: {}
+components:
+  schemas:
+    Response:
+      type: object
+      required:
+        - successful
+        - messages
+      properties:
+        successful:
+          type: boolean
+        messages:
+          type: array
+          items:
+            type: string
+        data:
+          x-go-type-skip-optional-pointer: true

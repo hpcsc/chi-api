@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../../openapi/configuration-schema.json
+package: root
+generate:
+  models: true
+output: ../types.gen.go

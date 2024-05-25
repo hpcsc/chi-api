@@ -16,8 +16,8 @@ import (
 )
 
 func TestUserHandler(t *testing.T) {
-	validPostRequest := func() *postRequest {
-		return &postRequest{
+	validPostRequest := func() *CreateUserRequest {
+		return &CreateUserRequest{
 			Name:  "test-user",
 			Email: "test@example.com",
 			Age:   20,
@@ -42,28 +42,28 @@ func TestUserHandler(t *testing.T) {
 
 	for _, tc := range []struct {
 		scenario      string
-		prepare       func(request *postRequest) *postRequest
+		prepare       func(request *CreateUserRequest) *CreateUserRequest
 		expectedError string
 	}{
 		{
 			scenario: "name is missing",
-			prepare: func(r *postRequest) *postRequest {
+			prepare: func(r *CreateUserRequest) *CreateUserRequest {
 				r.Name = ""
 				return r
 			},
-			expectedError: "Name is required",
+			expectedError: "name is required",
 		},
 		{
 			scenario: "name length is shorter than 7 characters",
-			prepare: func(r *postRequest) *postRequest {
+			prepare: func(r *CreateUserRequest) *CreateUserRequest {
 				r.Name = "test"
 				return r
 			},
-			expectedError: "Name min length is 7",
+			expectedError: "name min length is 7",
 		},
 		{
 			scenario: "invalid email",
-			prepare: func(r *postRequest) *postRequest {
+			prepare: func(r *CreateUserRequest) *CreateUserRequest {
 				r.Email = "test"
 				return r
 			},
@@ -71,15 +71,15 @@ func TestUserHandler(t *testing.T) {
 		},
 		{
 			scenario: "age is missing",
-			prepare: func(r *postRequest) *postRequest {
+			prepare: func(r *CreateUserRequest) *CreateUserRequest {
 				r.Age = 0
 				return r
 			},
-			expectedError: "Age is required",
+			expectedError: "age is required",
 		},
 		{
 			scenario: "age is less than 18",
-			prepare: func(r *postRequest) *postRequest {
+			prepare: func(r *CreateUserRequest) *CreateUserRequest {
 				r.Age = 17
 				return r
 			},
@@ -87,7 +87,7 @@ func TestUserHandler(t *testing.T) {
 		},
 		{
 			scenario: "age is more than 99",
-			prepare: func(r *postRequest) *postRequest {
+			prepare: func(r *CreateUserRequest) *CreateUserRequest {
 				r.Age = 100
 				return r
 			},

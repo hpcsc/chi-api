@@ -6,12 +6,6 @@ import (
 	"github.com/gookit/validate"
 )
 
-type Response struct {
-	Successful bool        `json:"successful"`
-	Messages   []string    `json:"messages"`
-	Data       interface{} `json:"data,omitempty"`
-}
-
 func Succeed() *Response {
 	return SucceedWithData(nil)
 }

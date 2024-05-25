@@ -1,0 +1,26 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Chi API
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: root response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootResponse'
+      tags:
+        - root
+components:
+  schemas:
+    RootResponse:
+      type: object
+      required:
+        - version
+      properties:
+        version:
+          type: string
+          example: main

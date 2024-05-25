@@ -29,7 +29,7 @@ func (h *handler) Routes() []*route.Route {
 }
 
 func (h *handler) post(w http.ResponseWriter, req *http.Request) {
-	var postData postRequest
+	var postData CreateUserRequest
 	if err := json.NewDecoder(req.Body).Decode(&postData); err != nil {
 		_ = h.renderer.JSON(w, http.StatusBadRequest, response.Fail("received invalid request body"))
 		return

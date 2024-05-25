@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../openapi/configuration-schema.json
+package: user
+generate:
+  models: true
+import-mapping:
+  ../../../response/openapi/spec.yaml: github.com/hpcsc/chi-api/internal/response
+output: ../types.gen.go

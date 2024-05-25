@@ -28,9 +28,5 @@ func (h *handler) Routes() []*route.Route {
 }
 
 func (h *handler) get(w http.ResponseWriter, _ *http.Request) {
-	_ = h.renderer.JSON(w, http.StatusOK, struct {
-		Version string `json:"version"`
-	}{
-		Version: Version,
-	})
+	_ = h.renderer.JSON(w, http.StatusOK, RootResponse{Version: Version})
 }

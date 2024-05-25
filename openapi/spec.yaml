@@ -1,0 +1,91 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Chi API
+tags:
+  - name: users
+    x-displayName: users
+  - name: root
+    x-displayName: root
+paths:
+  /users:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: create user successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: fail with user validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+      tags:
+        - users
+  /:
+    get:
+      responses:
+        '200':
+          description: root response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootResponse'
+      tags:
+        - root
+components:
+  schemas:
+    Response:
+      type: object
+      required:
+        - successful
+        - messages
+      properties:
+        successful:
+          type: boolean
+        messages:
+          type: array
+          items:
+            type: string
+        data:
+          x-go-type-skip-optional-pointer: true
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - email
+        - age
+      properties:
+        name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required|min_len:7
+            message: required:{field} is required
+        email:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: email
+            message: email is invalid
+        age:
+          type: number
+          x-go-type: int
+          x-oapi-codegen-extra-tags:
+            validate: required|int|min:18|max:99
+            message: int:age must int|min:age min value is 18|max:age max value is 99
+    RootResponse:
+      type: object
+      required:
+        - version
+      properties:
+        version:
+          type: string
+          example: main
