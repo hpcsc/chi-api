@@ -2,6 +2,7 @@ version: '3'
 
 includes:
   test: Taskfile.test.yml
+  openapi: Taskfile.openapi.yml
 
 tasks:
   run:

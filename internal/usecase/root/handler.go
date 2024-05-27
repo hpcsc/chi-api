@@ -27,10 +27,19 @@ func (h *handler) Routes() []*route.Route {
 	}
 }
 
+type getResponse struct {
+	Version string `json:"version"`
+}
+
+// @Summary		Root
+// @Description	root handler
+// @Tags			root
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	getResponse
+// @Router			/ [get]
 func (h *handler) get(w http.ResponseWriter, _ *http.Request) {
-	_ = h.renderer.JSON(w, http.StatusOK, struct {
-		Version string `json:"version"`
-	}{
+	_ = h.renderer.JSON(w, http.StatusOK, getResponse{
 		Version: Version,
 	})
 }

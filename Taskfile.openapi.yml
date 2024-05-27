@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+  install-cli:
+    cmds:
+      - go install github.com/swaggo/swag/cmd/swag@latest
+
+  init:
+    deps:
+      - install-cli
+    cmds:
+      - swag init --generalInfo ./internal/server/server.go
+
+  format:
+    deps:
+      - install-cli
+    cmds:
+      - swag fmt

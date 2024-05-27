@@ -28,6 +28,15 @@ func (h *handler) Routes() []*route.Route {
 	}
 }
 
+// @Summary		Create a user
+// @Description	Create a user
+// @Tags			user
+// @Accept			json
+// @Produce		json
+// @Param			request	body		postRequest	true "Add user request"
+// @Success		200		{object}	response.Response
+// @Failure		400		{object}	response.Response
+// @Router			/users [post]
 func (h *handler) post(w http.ResponseWriter, req *http.Request) {
 	var postData postRequest
 	if err := json.NewDecoder(req.Body).Decode(&postData); err != nil {

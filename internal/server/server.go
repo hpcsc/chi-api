@@ -11,11 +11,26 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
+	_ "github.com/hpcsc/chi-api/docs"
 	"github.com/hpcsc/chi-api/internal/config"
 	"github.com/hpcsc/chi-api/internal/usecase"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+//	@title			Chi API
+//	@version		1.0
+//	@description	Chi API
+
+//	@contact.name	David Nguyen
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@BasePath	/
+
 func New(name string, cfg *config.Config, logger *slog.Logger) (*Server, error) {
+	addr := fmt.Sprintf(":%s", cfg.Port)
+
 	handler, err := newHandler(name, cfg, logger)
 	if err != nil {
 		return nil, err
@@ -24,7 +39,7 @@ func New(name string, cfg *config.Config, logger *slog.Logger) (*Server, error) 
 	return &Server{
 		cfg: cfg,
 		httpServer: &http.Server{
-			Addr:    fmt.Sprintf(":%s", cfg.Port),
+			Addr:    addr,
 			Handler: handler,
 		},
 		logger: logger,
@@ -42,6 +57,8 @@ func newHandler(name string, cfg *config.Config, logger *slog.Logger) (http.Hand
 	})))
 
 	r.Use(middleware.Recoverer)
+
+	r.Get("/swagger/*", httpSwagger.Handler())
 
 	if err := usecase.Register(r, cfg, logger); err != nil {
 		return nil, err

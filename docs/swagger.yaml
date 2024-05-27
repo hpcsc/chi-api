@@ -1,0 +1,78 @@
+basePath: /
+definitions:
+  response.Response:
+    properties:
+      data: {}
+      messages:
+        items:
+          type: string
+        type: array
+      successful:
+        type: boolean
+    type: object
+  root.getResponse:
+    properties:
+      version:
+        type: string
+    type: object
+  user.postRequest:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact:
+    name: David Nguyen
+  description: Chi API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Chi API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: root handler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/root.getResponse'
+      summary: Root
+      tags:
+      - root
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a user
+      parameters:
+      - description: Add user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.postRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a user
+      tags:
+      - user
+swagger: "2.0"
