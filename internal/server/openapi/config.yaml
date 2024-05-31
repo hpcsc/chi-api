@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../openapi/configuration-schema.json
+package: server
+generate:
+  chi-server: true
+compatibility:
+  apply-chi-middleware-first-to-last: true
+output: interface.gen.go

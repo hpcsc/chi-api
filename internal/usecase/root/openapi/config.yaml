@@ -6,4 +6,4 @@ generate:
 output-options:
   include-tags:
     - root
-output: ../types.gen.go
+output: types.gen.go

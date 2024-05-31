@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=./configuration-schema.json
-package: server
-generate:
-  chi-server: true
-compatibility:
-  apply-chi-middleware-first-to-last: true
-output: ../internal/server/interface.gen.go

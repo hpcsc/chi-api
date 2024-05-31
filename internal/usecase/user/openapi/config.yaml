@@ -8,4 +8,4 @@ output-options:
     - users
 import-mapping:
   ../../../response/openapi/spec.yaml: github.com/hpcsc/chi-api/internal/response
-output: ../types.gen.go
+output: types.gen.go
